@@ -28,6 +28,19 @@ export default function AppLayout() {
           gestureEnabled: false,
         }}
       />
+
+      <Stack.Screen
+        name="setup"
+        options={{
+          headerShown: true,
+          title: '',
+          headerBackTitle: 'Back',
+          // headerTitleStyle: {
+          // fontSize: 29,
+          // fontWeight: "700"
+          // }
+        }}
+      />
     </Stack>
   );
 }
