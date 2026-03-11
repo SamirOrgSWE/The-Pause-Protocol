@@ -1,70 +1,180 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import {
+  Alert,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import { router } from 'expo-router';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+
+import FloatingInput from '../../components/FloatingInput';
+import { auth } from '../../services/firebase';
 
 export default function LoginScreen() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const validate = () => {
+    let valid = true;
+
+    setEmailError('');
+    setPasswordError('');
+
+    if (!email.trim()) {
+      setEmailError('Enter your email');
+      valid = false;
+    }
+
+    if (!password.trim()) {
+      setPasswordError('Enter your password');
+      valid = false;
+    }
+
+    return valid;
+  };
+
+  const handleLogin = async () => {
+    if (!validate()) return;
+
+    try {
+      setLoading(true);
+      await signInWithEmailAndPassword(auth, email.trim(), password);
+      router.replace('/(app)/home');
+    } catch (error: any) {
+      Alert.alert('Login failed', error?.message || 'Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Pause Protocol</Text>
-      <Text style={styles.subtitle}>Login</Text>
-
-      <Pressable
-        style={styles.button}
-        onPress={() => router.replace('/(app)/home')}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <KeyboardAvoidingView
+        style={styles.screen}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <Text style={styles.buttonText}>Go to Home</Text>
-      </Pressable>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.title}>Pause Protocol</Text>
+            <Text style={styles.subtitle}>Log in to continue</Text>
+          </View>
 
-      <Pressable
-        style={styles.secondaryButton}
-        onPress={() => router.push('/(auth)/register')}
-      >
-        <Text style={styles.secondaryButtonText}>Create Account</Text>
-      </Pressable>
-    </View>
+          <View style={styles.form}>
+            <FloatingInput
+              label="Email"
+              value={email}
+              onChangeText={(text) => {
+                setEmail(text);
+                if (emailError) setEmailError('');
+              }}
+              error={emailError}
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="email-address"
+              textContentType="emailAddress"
+            />
+
+            <FloatingInput
+              label="Password"
+              value={password}
+              onChangeText={(text) => {
+                setPassword(text);
+                if (passwordError) setPasswordError('');
+              }}
+              error={passwordError}
+              secureTextEntry
+              autoCapitalize="none"
+              autoCorrect={false}
+              textContentType="password"
+            />
+
+            <Pressable
+              style={[styles.primaryButton, loading && styles.buttonDisabled]}
+              onPress={handleLogin}
+              disabled={loading}
+            >
+              <Text style={styles.primaryButtonText}>
+                {loading ? 'Logging in...' : 'Log In'}
+              </Text>
+            </Pressable>
+
+            <Pressable
+              style={styles.secondaryButton}
+              onPress={() => router.push('/(auth)/register')}
+            >
+              <Text style={styles.secondaryButtonText}>Create Account</Text>
+            </Pressable>
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
     backgroundColor: '#ffffff',
-    justifyContent: 'center',
+  },
+  container: {
+    flex: 1,
     paddingHorizontal: 24,
+    paddingTop: 90,
+  },
+  header: {
+    marginBottom: 40,
   },
   title: {
     fontSize: 32,
     fontWeight: '700',
     textAlign: 'center',
+    color: '#111111',
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: 16,
     textAlign: 'center',
-    color: '#666',
-    marginBottom: 32,
+    color: '#666666',
   },
-  button: {
-    backgroundColor: '#222',
-    paddingVertical: 14,
-    borderRadius: 10,
-    marginBottom: 12,
+  form: {
+    flexShrink: 1,
   },
-  buttonText: {
-    color: '#fff',
+  primaryButton: {
+    backgroundColor: '#111111',
+    borderRadius: 14,
+    paddingVertical: 16,
+    marginTop: 4,
+  },
+  buttonDisabled: {
+    opacity: 0.7,
+  },
+  primaryButtonText: {
+    color: '#ffffff',
     textAlign: 'center',
     fontSize: 16,
     fontWeight: '600',
   },
   secondaryButton: {
-    paddingVertical: 14,
-    borderRadius: 10,
+    marginTop: 14,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#d6d6d6',
+    borderRadius: 14,
+    paddingVertical: 16,
   },
   secondaryButtonText: {
     textAlign: 'center',
+    color: '#111111',
     fontSize: 16,
-    color: '#222',
     fontWeight: '500',
   },
 });

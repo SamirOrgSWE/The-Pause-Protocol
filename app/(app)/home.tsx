@@ -1,16 +1,24 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Alert } from 'react-native';
 import { router } from 'expo-router';
+import { signOut } from 'firebase/auth';
+import { auth } from '../../services/firebase';
 
 export default function HomeScreen() {
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      router.replace('/(auth)/login');
+    } catch (error: any) {
+      Alert.alert('Logout failed', error.message || 'Something went wrong.');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to Pause Protocol</Text>
-      <Text style={styles.subtitle}>Home screen is working.</Text>
+      <Text style={styles.subtitle}>You are logged in.</Text>
 
-      <Pressable
-        style={styles.button}
-        onPress={() => router.replace('/(auth)/login')}
-      >
+      <Pressable style={styles.button} onPress={handleLogout}>
         <Text style={styles.buttonText}>Log Out</Text>
       </Pressable>
     </View>
@@ -31,9 +39,9 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 17,
-    textAlign: 'center',
+    fontSize: 16,
     color: '#666',
+    textAlign: 'center',
     marginBottom: 32,
   },
   button: {
