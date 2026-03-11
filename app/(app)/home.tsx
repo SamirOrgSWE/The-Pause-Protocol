@@ -5,16 +5,23 @@ export default function HomeScreen() {
   return (
     <View style={styles.screen}>
       <View style={styles.container}>
-        <Text style={styles.title}>Pause Protocol</Text>
+        <Text style={styles.title}>The Pause Protocol</Text>
         <Text style={styles.subtitle}>
           Choose where you want to go next.
         </Text>
 
         <Pressable
+          style={styles.secondaryButton}
+          onPress={() => router.push('/(app)/profile')}
+        >
+          <Text style={styles.secondaryButtonText}>Profile</Text>
+        </Pressable>
+
+        <Pressable
           style={styles.primaryButton}
           onPress={() => router.push('/(app)/setup')}
         >
-          <Text style={styles.primaryButtonText}>Setup</Text>
+          <Text style={styles.primaryButtonText}>Setup Instructions</Text>
         </Pressable>
 
         <Pressable
@@ -31,12 +38,7 @@ export default function HomeScreen() {
           <Text style={styles.primaryButtonText}>Reflect</Text>
         </Pressable> */}
 
-        <Pressable
-          style={styles.secondaryButton}
-          onPress={() => router.push('/(app)/profile')}
-        >
-          <Text style={styles.secondaryButtonText}>Profile</Text>
-        </Pressable>
+        
       </View>
     </View>
   );
@@ -82,6 +84,7 @@ const styles = StyleSheet.create({
     borderColor: '#d6d6d6',
     borderRadius: 14,
     paddingVertical: 16,
+    marginBottom: 14
   },
   secondaryButtonText: {
     textAlign: 'center',
