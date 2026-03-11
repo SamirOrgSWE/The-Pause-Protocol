@@ -1,34 +1,34 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 
-export default function HomeScreen() {
+export default function PauseScreen() {
   return (
     <View style={styles.screen}>
       <View style={styles.container}>
-        <Text style={styles.title}>Pause Protocol</Text>
+        <Text style={styles.title}>Pause</Text>
         <Text style={styles.subtitle}>
-          Choose where you want to go next.
+          This is where the guided pause feature will go.
         </Text>
 
-        <Pressable
-          style={styles.primaryButton}
-          onPress={() => router.push('/(app)/pause')}
-        >
-          <Text style={styles.primaryButtonText}>Pause</Text>
-        </Pressable>
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Take a moment</Text>
+          <Text style={styles.cardText}>
+            Breathe in slowly. Hold. Breathe out. Let this be your reset space.
+          </Text>
+        </View>
 
         <Pressable
           style={styles.primaryButton}
           onPress={() => router.push('/(app)/reflect')}
         >
-          <Text style={styles.primaryButtonText}>Reflect</Text>
+          <Text style={styles.primaryButtonText}>Go to Reflection</Text>
         </Pressable>
 
         <Pressable
           style={styles.secondaryButton}
-          onPress={() => router.push('/(app)/profile')}
+          onPress={() => router.back()}
         >
-          <Text style={styles.secondaryButtonText}>Profile</Text>
+          <Text style={styles.secondaryButtonText}>Back</Text>
         </Pressable>
       </View>
     </View>
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     paddingTop: 100,
   },
   title: {
-    fontSize: 32,
+    fontSize: 30,
     fontWeight: '700',
     textAlign: 'center',
     color: '#111111',
@@ -56,7 +56,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     color: '#666666',
-    marginBottom: 32,
+    marginBottom: 28,
+  },
+  card: {
+    borderWidth: 1,
+    borderColor: '#d6d6d6',
+    borderRadius: 16,
+    padding: 18,
+    backgroundColor: '#ffffff',
+    marginBottom: 24,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#111111',
+    marginBottom: 8,
+  },
+  cardText: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: '#555555',
   },
   primaryButton: {
     backgroundColor: '#111111',
