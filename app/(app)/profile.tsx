@@ -26,12 +26,12 @@ export default function ProfileScreen() {
           <Text style={styles.value}>{auth.currentUser?.email || 'No email found'}</Text>
         </View>
 
-        <Pressable
+        {/*<Pressable
           style={styles.secondaryButton}
           onPress={() => router.back()}
         >
           <Text style={styles.secondaryButtonText}>Back</Text>
-        </Pressable>
+        </Pressable>*/}
 
         <Pressable
           style={styles.primaryButton}
@@ -99,6 +99,10 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   primaryButton: {
+    position: 'absolute',
+    bottom: 40,
+    left: 24,
+    right: 24,
     backgroundColor: '#ff0000a8',
     borderRadius: 14,
     paddingVertical: 16,
