@@ -14,15 +14,15 @@ export default function HomeScreen() {
           style={styles.primaryButton}
           onPress={() => router.push('/(app)/pause')}
         >
-          <Text style={styles.primaryButtonText}>Pause</Text>
+          <Text style={styles.primaryButtonText}>Manual Pause</Text>
         </Pressable>
-
-        <Pressable
+        {/*button for reflection page (not including for this project)*/}
+        {/* <Pressable
           style={styles.primaryButton}
           onPress={() => router.push('/(app)/reflect')}
         >
           <Text style={styles.primaryButtonText}>Reflect</Text>
-        </Pressable>
+        </Pressable> */}
 
         <Pressable
           style={styles.secondaryButton}

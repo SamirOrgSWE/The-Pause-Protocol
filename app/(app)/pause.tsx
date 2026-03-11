@@ -1,104 +1,129 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { router } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { Stack, router, useLocalSearchParams } from 'expo-router';
 
 export default function PauseScreen() {
+  const { appName, seconds } = useLocalSearchParams<{
+    appName?: string;
+    seconds?: string;
+  }>();
+
+  const targetApp = appName || 'a distraction';
+  const startSeconds = Number(seconds) > 0 ? Number(seconds) : 10;
+
+  const [timeLeft, setTimeLeft] = useState(startSeconds);
+
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timeLeft]);
+
+  const canContinue = timeLeft <= 0;
+
+  const handleContinue = () => {
+    if (!canContinue) return;
+    if (router.canGoBack()) {
+        router.back();
+    } else {
+        router.replace('/home');
+    }
+  };
+
+  
   return (
-    <View style={styles.screen}>
+    <>
+      <Stack.Screen/>
+
       <View style={styles.container}>
-        <Text style={styles.title}>Pause</Text>
+        <Text style={styles.title}>Pause Protocol</Text>
+
         <Text style={styles.subtitle}>
-          This is where the guided pause feature will go.
+          Before opening {targetApp}, take a breath.
         </Text>
 
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Take a moment</Text>
-          <Text style={styles.cardText}>
-            Breathe in slowly. Hold. Breathe out. Let this be your reset space.
-          </Text>
+        <View style={styles.circle}>
+          <Text style={styles.timer}>{timeLeft}</Text>
         </View>
 
-        <Pressable
-          style={styles.primaryButton}
-          onPress={() => router.push('/(app)/reflect')}
-        >
-          <Text style={styles.primaryButtonText}>Go to Reflection</Text>
-        </Pressable>
+        <Text style={styles.text}>
+          Ask yourself whether you really want to open {targetApp} right now.
+        </Text>
 
         <Pressable
-          style={styles.secondaryButton}
-          onPress={() => router.back()}
+          disabled={!canContinue}
+          onPress={handleContinue}
+          style={[styles.button, !canContinue && styles.buttonDisabled]}
         >
-          <Text style={styles.secondaryButtonText}>Back</Text>
+          <Text style={styles.buttonText}>
+            {canContinue ? 'Continue' : `Wait ${timeLeft}s`}
+          </Text>
         </Pressable>
       </View>
-    </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
   container: {
     flex: 1,
+    backgroundColor: '#0f172a',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: 24,
-    paddingTop: 100,
   },
   title: {
-    fontSize: 30,
+    fontSize: 34,
     fontWeight: '700',
-    textAlign: 'center',
-    color: '#111111',
-    marginBottom: 8,
+    color: '#fff',
+    marginBottom: 10,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 18,
+    color: '#cbd5e1',
     textAlign: 'center',
-    color: '#666666',
-    marginBottom: 28,
-  },
-  card: {
-    borderWidth: 1,
-    borderColor: '#d6d6d6',
-    borderRadius: 16,
-    padding: 18,
-    backgroundColor: '#ffffff',
     marginBottom: 24,
   },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#111111',
-    marginBottom: 8,
+  circle: {
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    borderWidth: 6,
+    borderColor: '#38bdf8',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
   },
-  cardText: {
-    fontSize: 15,
-    lineHeight: 22,
-    color: '#555555',
+  timer: {
+    fontSize: 56,
+    fontWeight: '700',
+    color: '#fff',
   },
-  primaryButton: {
-    backgroundColor: '#111111',
-    borderRadius: 14,
-    paddingVertical: 16,
-    marginBottom: 14,
-  },
-  primaryButtonText: {
-    color: '#ffffff',
-    textAlign: 'center',
+  text: {
     fontSize: 16,
-    fontWeight: '600',
-  },
-  secondaryButton: {
-    borderWidth: 1,
-    borderColor: '#d6d6d6',
-    borderRadius: 14,
-    paddingVertical: 16,
-  },
-  secondaryButtonText: {
+    color: '#e2e8f0',
     textAlign: 'center',
-    color: '#111111',
+    lineHeight: 24,
+    marginBottom: 28,
+  },
+  button: {
+    backgroundColor: '#38bdf8',
+    paddingVertical: 15,
+    paddingHorizontal: 24,
+    borderRadius: 14,
+    minWidth: 220,
+    alignItems: 'center',
+  },
+  buttonDisabled: {
+    backgroundColor: '#334155',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: '600',
     fontSize: 16,
-    fontWeight: '500',
   },
 });

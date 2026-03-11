@@ -22,7 +22,7 @@ export default function ProfileScreen() {
         </Text>
 
         <View style={styles.card}>
-          <Text style={styles.label}>Account</Text>
+          <Text style={styles.label}>Email</Text>
           <Text style={styles.value}>{auth.currentUser?.email || 'No email found'}</Text>
         </View>
 
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 100,
+    paddingTop: 0,
   },
   title: {
     fontSize: 30,
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   primaryButton: {
-    backgroundColor: '#111111',
+    backgroundColor: '#ff0000a8',
     borderRadius: 14,
     paddingVertical: 16,
   },

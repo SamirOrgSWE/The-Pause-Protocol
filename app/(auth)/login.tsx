@@ -65,7 +65,7 @@ export default function LoginScreen() {
       >
         <View style={styles.container}>
           <View style={styles.header}>
-            <Text style={styles.title}>Pause Protocol</Text>
+            <Text style={styles.title}>The Pause Protocol</Text>
             <Text style={styles.subtitle}>Log in to continue</Text>
           </View>
 
@@ -116,6 +116,7 @@ export default function LoginScreen() {
             </Pressable>
           </View>
         </View>
+        <Text style={styles.extranote}>Brought to you by the "C's Get Degrees"</Text>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
@@ -139,18 +140,28 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     textAlign: 'center',
     color: '#111111',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 18,
     textAlign: 'center',
     color: '#666666',
+    marginBottom: 0
   },
+  extranote: {
+  position: 'absolute',
+  bottom: 40,
+  left: 0,
+  right: 0,
+  textAlign: 'center',
+  fontSize: 15,
+  color: '#666666',
+},
   form: {
     flexShrink: 1,
   },
   primaryButton: {
-    backgroundColor: '#111111',
+    backgroundColor: '#4c00ff',
     borderRadius: 14,
     paddingVertical: 16,
     marginTop: 4,
