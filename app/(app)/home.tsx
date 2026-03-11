@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Linking } from 'react-native';
 import { router } from 'expo-router';
 
 export default function HomeScreen() {
@@ -9,6 +9,13 @@ export default function HomeScreen() {
         <Text style={styles.subtitle}>
           Choose where you want to go next.
         </Text>
+
+        <Pressable 
+          style={styles.primaryButton}
+          onPress={openShortcuts}
+        >
+          <Text style={styles.primaryButtonText}>Open Shortcuts</Text>
+        </Pressable>
 
         <Pressable
           style={styles.primaryButton}
@@ -34,6 +41,10 @@ export default function HomeScreen() {
     </View>
   );
 }
+
+const openShortcuts = async () => {
+  await Linking.openURL('shortcuts://');
+};
 
 const styles = StyleSheet.create({
   screen: {
