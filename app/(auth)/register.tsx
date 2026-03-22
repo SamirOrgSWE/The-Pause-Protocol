@@ -25,8 +25,7 @@ export default function RegisterScreen() {
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  const validate = () => {
+  const validate = () => { //validation for create account screen to make sure email valid and password
     let valid = true;
 
     setEmailError('');
@@ -35,6 +34,9 @@ export default function RegisterScreen() {
 
     if (!email.trim()) {
       setEmailError('Enter your email');
+      valid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { //valid email format
+      setEmailError('Enter a valid email address');
       valid = false;
     }
 
@@ -63,7 +65,7 @@ export default function RegisterScreen() {
     try {
       setLoading(true);
       await createUserWithEmailAndPassword(auth, email.trim(), password);
-      router.replace('/(app)/home');
+      router.replace({ pathname: '/(auth)/login', params: { registered: 'true' } });
     } catch (error: any) {
       Alert.alert('Registration failed', error?.message || 'Please try again.');
     } finally {
