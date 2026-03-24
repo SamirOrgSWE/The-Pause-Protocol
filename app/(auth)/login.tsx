@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Animated,
+  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -9,7 +10,6 @@ import {
   Text,
   TouchableWithoutFeedback,
   View,
-  Alert,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -90,7 +90,10 @@ export default function LoginScreen() {
               <FloatingInput
                   label="Email"
                   value={email}
-                  onChangeText={(text) => { setEmail(text); if (emailError) setEmailError(''); }}
+                  onChangeText={(text) => {
+                    setEmail(text);
+                    if (emailError && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text.trim())) setEmailError('');
+                  }}
                   error={emailError}
                   autoCapitalize="none"
                   autoCorrect={false}
