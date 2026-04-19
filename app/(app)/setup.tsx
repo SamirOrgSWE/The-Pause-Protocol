@@ -6,7 +6,7 @@ export default function SetupScreen() {
   const openShortcut = async () => {
     try {
       await Linking.openURL(
-        'https://www.icloud.com/shortcuts/79062e800f7e4ff990a9e2689a803ae8'
+        'https://www.icloud.com/shortcuts/c90c212f52e74af99cebc7b6be414250'
       );
     } catch (error) {
       console.error('Could not open shortcut link:', error);
@@ -236,7 +236,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#4c00ff',
     borderRadius: 14,
     paddingVertical: 16,
-    marginBottom: 12,
   },
   primaryButtonText: {
     color: '#ffffff',
@@ -250,6 +249,7 @@ const styles = StyleSheet.create({
     borderColor: '#4c00ff',
     borderRadius: 14,
     paddingVertical: 16,
+    marginBottom: 12,
   },
   secondaryButtonText: {
     color: '#4c00ff',
