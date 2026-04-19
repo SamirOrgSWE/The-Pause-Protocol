@@ -41,6 +41,20 @@ export default function AppLayout() {
           // }
         }}
       />
+
+      <Stack.Screen
+        name="adminQuotes"
+        options={{
+          headerShown: true,
+          title: '',
+          headerBackTitle: 'Back',
+          headerStyle: {
+          backgroundColor: '#0f172a',
+          },
+          headerShadowVisible: false,
+        }}
+      />
+
     </Stack>
   );
 }
