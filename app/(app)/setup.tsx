@@ -1,10 +1,50 @@
-import { View, Text, Pressable, StyleSheet, Linking, ScrollView } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Linking, ScrollView, Alert } from 'react-native';
+import * as FileSystem from 'expo-file-system/legacy';
+import * as Sharing from 'expo-sharing';
 
-export default function ProfileScreen() {
+export default function SetupScreen() {
   const openShortcut = async () => {
-    await Linking.openURL(
-      'https://www.icloud.com/shortcuts/79062e800f7e4ff990a9e2689a803ae8'
-    );
+    try {
+      await Linking.openURL(
+        'https://www.icloud.com/shortcuts/c90c212f52e74af99cebc7b6be414250'
+      );
+    } catch (error) {
+      console.error('Could not open shortcut link:', error);
+      Alert.alert('Error', 'Could not open the shortcut link.');
+    }
+  };
+
+  const downloadJsonFile = async () => {
+    try {
+      const fileUri = FileSystem.documentDirectory + 'cooldowns.json';
+
+      const initialData = {
+      };
+
+      await FileSystem.writeAsStringAsync(
+        fileUri,
+        JSON.stringify(initialData, null, 2)
+      );
+
+      const available = await Sharing.isAvailableAsync();
+
+      if (!available) {
+        Alert.alert(
+          'Sharing unavailable',
+          'Could not open the share sheet on this device.'
+        );
+        return;
+      }
+
+      await Sharing.shareAsync(fileUri, {
+        mimeType: 'application/json',
+        dialogTitle: 'Save cooldowns.json to Files',
+        UTI: 'public.json',
+      });
+    } catch (error) {
+      console.error('Could not create JSON file:', error);
+      Alert.alert('Error', 'Could not create or share the cooldown file.');
+    }
   };
 
   return (
@@ -14,6 +54,7 @@ export default function ProfileScreen() {
         showsVerticalScrollIndicator={false}
       >
         <Text style={styles.title}>Setup</Text>
+
         <Text style={styles.subtitle}>
           Learn how to set up The Pause Protocol on your iPhone.
         </Text>
@@ -22,10 +63,12 @@ export default function ProfileScreen() {
           <View style={styles.stepNumber}>
             <Text style={styles.stepNumberText}>1</Text>
           </View>
+
           <View style={styles.stepTextWrapper}>
-            <Text style={styles.stepTitle}>Download the shortcut</Text>
+            <Text style={styles.stepTitle}>Download the cooldown file</Text>
+
             <Text style={styles.stepDescription}>
-              Tap the button below and add the Pause Protocol shortcut to your Shortcuts app.
+              Tap the cooldown file button below and save cooldowns.json to the Shortcuts folder under iCloud Drive.
             </Text>
           </View>
         </View>
@@ -34,10 +77,12 @@ export default function ProfileScreen() {
           <View style={styles.stepNumber}>
             <Text style={styles.stepNumberText}>2</Text>
           </View>
+
           <View style={styles.stepTextWrapper}>
-            <Text style={styles.stepTitle}>Within the Shortcuts app...</Text>
+            <Text style={styles.stepTitle}>Download the shortcut</Text>
+
             <Text style={styles.stepDescription}>
-              Go to the Automation tab and create a new personal automation (+ sign in the top right).
+              Tap the button below and add the Pause Protocol shortcut to your Shortcuts app. IMPORTANT NOTE: under the third block of the script, you must manually select the cooldowns file you saved previously.
             </Text>
           </View>
         </View>
@@ -46,10 +91,13 @@ export default function ProfileScreen() {
           <View style={styles.stepNumber}>
             <Text style={styles.stepNumberText}>3</Text>
           </View>
+
           <View style={styles.stepTextWrapper}>
-            <Text style={styles.stepTitle}>Choose the app triggers</Text>
+            <Text style={styles.stepTitle}>Set up the automation</Text>
+
             <Text style={styles.stepDescription}>
-              Select the option that says 'App', choose all apps you consider distractions, and set it to 'Is Opened' and 'Run Immediately'.
+              In Shortcuts, go to Automation, create a Personal Automation, choose App, then pick
+              the distracting apps you want.
             </Text>
           </View>
         </View>
@@ -58,10 +106,12 @@ export default function ProfileScreen() {
           <View style={styles.stepNumber}>
             <Text style={styles.stepNumberText}>4</Text>
           </View>
+
           <View style={styles.stepTextWrapper}>
-            <Text style={styles.stepTitle}>Run the Pause Protocol shortcut</Text>
+            <Text style={styles.stepTitle}>Select the proper settings</Text>
+
             <Text style={styles.stepDescription}>
-              Search for 'The Pause Protocol' and select it.
+              Select the option that says 'App', choose all apps you consider distractions, and set it to 'Is Opened' and 'Run Immediately' and make sure 'Notify When Run' is off.
             </Text>
           </View>
         </View>
@@ -70,8 +120,24 @@ export default function ProfileScreen() {
           <View style={styles.stepNumber}>
             <Text style={styles.stepNumberText}>5</Text>
           </View>
+
+          <View style={styles.stepTextWrapper}>
+            <Text style={styles.stepTitle}>Run the Pause Protocol shortcut</Text>
+
+            <Text style={styles.stepDescription}>
+              Tap 'Next' and then under 'My Shortcuts' select 'The Pause Protocol'.
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.stepCard}>
+          <View style={styles.stepNumber}>
+            <Text style={styles.stepNumberText}>6</Text>
+          </View>
+
           <View style={styles.stepTextWrapper}>
             <Text style={styles.stepTitle}>Congratulations!</Text>
+
             <Text style={styles.stepDescription}>
               You have successfully setup The Pause Protocol!
             </Text>
@@ -79,9 +145,14 @@ export default function ProfileScreen() {
         </View>
       </ScrollView>
 
+      <View style={styles.footer}>
+        <Pressable style={styles.secondaryButton} onPress={downloadJsonFile}>
+          <Text style={styles.secondaryButtonText}>Download the Cooldown File</Text>
+        </Pressable>
         <Pressable style={styles.primaryButton} onPress={openShortcut}>
           <Text style={styles.primaryButtonText}>Download the Shortcut</Text>
-        </Pressable>
+        </Pressable>        
+      </View>
     </View>
   );
 }
@@ -94,7 +165,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 24,
     paddingTop: 8,
-    paddingBottom: 140,
+    paddingBottom: 180,
   },
   title: {
     fontSize: 30,
@@ -161,17 +232,27 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#eeeeee',
   },
-    primaryButton: {
-    position: 'absolute',
-    bottom: 40,
-    left: 24,
-    right: 24,
+  primaryButton: {
     backgroundColor: '#4c00ff',
     borderRadius: 14,
     paddingVertical: 16,
   },
   primaryButtonText: {
     color: '#ffffff',
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  secondaryButton: {
+    backgroundColor: '#ffffff',
+    borderWidth: 2,
+    borderColor: '#4c00ff',
+    borderRadius: 14,
+    paddingVertical: 16,
+    marginBottom: 12,
+  },
+  secondaryButtonText: {
+    color: '#4c00ff',
     textAlign: 'center',
     fontSize: 16,
     fontWeight: '600',
