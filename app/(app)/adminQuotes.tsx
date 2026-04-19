@@ -104,7 +104,7 @@ export default function AdminQuotesScreen() {
                 style={{ width: '100%', marginTop: 20 }}
                 renderItem={({ item }) => (
                     <View style={styles.quoteCard}>
-                        <Text style={styles.quoteText}>{'"{item.text}"'}</Text>
+                        <Text style={styles.quoteText}>{'\u201C'}{item.text}{'\u201D'}</Text>
                         <Text style={styles.quoteAuthor}>— {item.author} · {item.category}</Text>
                         <View style={styles.actions}>
                             <Pressable onPress={() => handleEdit(item)} style={styles.editBtn}>
