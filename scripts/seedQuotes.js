@@ -6,9 +6,9 @@ admin.initializeApp({
 });
 
 const db = admin.firestore();
-
+//100 quotes; can be modified, added, removed by admin
 const quotes = [
-    // Mindfulness
+    //Mindfulness
     { text: "The present moment is the only moment available to us.", author: "Thich Nhat Hanh", category: "mindfulness" },
     { text: "Breathe deeply and arrive in the present moment.", author: "Thich Nhat Hanh", category: "mindfulness" },
     { text: "Wherever you are, be there totally.", author: "Eckhart Tolle", category: "mindfulness" },
@@ -44,7 +44,7 @@ const quotes = [
     { text: "Wherever you go, there you are.", author: "Jon Kabat-Zinn", category: "mindfulness" },
     { text: "If you want to conquer the anxiety of life, live in the moment, live in the breath.", author: "Amit Ray", category: "mindfulness" },
 
-    // Focus
+    //Focus
     { text: "Where focus goes, energy flows.", author: "Tony Robbins", category: "focus" },
     { text: "The key is not to prioritize what's on your schedule, but to schedule your priorities.", author: "Stephen Covey", category: "focus" },
     { text: "Concentrate all your thoughts upon the work at hand.", author: "Alexander Graham Bell", category: "focus" },
@@ -79,7 +79,7 @@ const quotes = [
     { text: "If you chase two rabbits, you will not catch either one.", author: "Russian Proverb", category: "focus" },
     { text: "I fear not the man who has practiced 10,000 kicks once, but I fear the man who has practiced one kick 10,000 times.", author: "Bruce Lee", category: "focus" },
 
-    // Wellness
+    //Wellness
     { text: "You don't have to be positive all the time. It's okay to feel what you feel.", author: "Lori Deschene", category: "wellness" },
     { text: "Rest is not idleness — it is the work of recovery.", author: "Unknown", category: "wellness" },
     { text: "Take care of your body. It's the only place you have to live.", author: "Jim Rohn", category: "wellness" },
@@ -115,6 +115,7 @@ const quotes = [
     { text: "Health is not about the weight you lose, but about the life you gain.", author: "Unknown", category: "wellness" },
 ];
 
+//updates FireStore quotes in single operation
 async function seed() {
     const batch = db.batch();
     quotes.forEach(quote => {

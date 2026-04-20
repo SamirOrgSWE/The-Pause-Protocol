@@ -4,7 +4,7 @@ import { auth, db } from "../services/firebase";
 
 export function useUserRole() {
     const [role, setRole] = useState<string | null>(null);
-
+//fetches type of user based on account from firestore (admin or normal user)
     useEffect(() => {
         const fetchRole = async () => {
             const user = auth.currentUser;

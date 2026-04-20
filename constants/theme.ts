@@ -4,7 +4,7 @@
  */
 
 import { Platform } from 'react-native';
-
+//light and dark mode
 const tintColorLight = '#0a7ea4';
 const tintColorDark = '#fff';
 
@@ -27,6 +27,8 @@ export const Colors = {
   },
 };
 
+
+//font stacks for ios, android, and web
 export const Fonts = Platform.select({
   ios: {
     /** iOS `UIFontDescriptorSystemDesignDefault` */

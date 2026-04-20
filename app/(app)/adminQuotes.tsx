@@ -4,7 +4,7 @@ import { getAllQuotes, addQuote, updateQuote, deleteQuote } from '../../services
 import { useUserRole } from '../../hooks/useUserRole';
 
 type Quote = { id: string; text: string; author: string; category: string };
-
+//Admin screen for managing quotes displayed on pause timer
 export default function AdminQuotesScreen() {
     const role = useUserRole();
     const [quotes, setQuotes] = useState<Quote[]>([]);
@@ -17,11 +17,12 @@ export default function AdminQuotesScreen() {
         fetchQuotes();
     }, []);
 
+    //Fetch quotes from FireStore and update locally
     const fetchQuotes = async () => {
         const data = await getAllQuotes();
         setQuotes(data as Quote[]);
     };
-
+    //Add new quote or update  existing one based on editingId
     const handleSave = async () => {
         if (!text || !author || !category) {
             Alert.alert('Please fill in all fields.');
@@ -39,6 +40,7 @@ export default function AdminQuotesScreen() {
         fetchQuotes();
     };
 
+    //Populate input field w selected quote for editing
     const handleEdit = (quote: Quote) => {
         setText(quote.text);
         setAuthor(quote.author);
@@ -46,6 +48,8 @@ export default function AdminQuotesScreen() {
         setEditingId(quote.id);
     };
 
+
+    //Confirms quote w FireStore and deletes it
     const handleDelete = (id: string) => {
         Alert.alert('Delete Quote', 'Are you sure?', [
             { text: 'Cancel', style: 'cancel' },
@@ -57,7 +61,7 @@ export default function AdminQuotesScreen() {
             }
         ]);
     };
-
+    //Block access if user not admin. Follows part of rubric for another type of user
     if (role !== 'admin') {
         return (
             <View style={styles.container}>
@@ -66,11 +70,10 @@ export default function AdminQuotesScreen() {
             </View>
         );
     }
-
+//Fields for quote edits
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Manage Quotes</Text>
-
             <TextInput
                 style={styles.input}
                 placeholder="Quote text"
