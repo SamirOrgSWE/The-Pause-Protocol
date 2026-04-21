@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
+import { getRandomQuote } from '../../services/quoteService';
 
 export default function PauseScreen() {
   const { appName, seconds } = useLocalSearchParams<{
@@ -12,6 +13,9 @@ export default function PauseScreen() {
   const startSeconds = Number(seconds) > 0 ? Number(seconds) : 10;
 
   const [timeLeft, setTimeLeft] = useState(startSeconds);
+  const [quote, setQuote] = useState<{ text: string; author: string } | null>(null);
+  useEffect(() => {
+    getRandomQuote().then((q) => setQuote(q as unknown as { text: string; author: string }));  }, []);
 
   useEffect(() => {
     if (timeLeft <= 0) return;
@@ -49,6 +53,13 @@ export default function PauseScreen() {
         <View style={styles.circle}>
           <Text style={styles.timer}>{timeLeft}</Text>
         </View>
+
+        {quote && (
+            <View style={styles.quoteContainer}>
+              <Text style={styles.quoteText}>{'\u201C'}{quote.text}{'\u201D'}</Text>
+              <Text style={styles.quoteAuthor}>— {quote.author}</Text>
+            </View>
+        )}
 
         <Text style={styles.text}>
           Ask yourself whether you really want to open {targetApp} right now.
@@ -125,5 +136,27 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
     fontSize: 16,
+  },
+  quoteContainer: {
+    backgroundColor: '#1e293b',
+    borderLeftWidth: 4,
+    borderLeftColor: '#38bdf8',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginBottom: 20,
+    width: '100%',
+  },
+  quoteText: {
+    fontSize: 15,
+    color: '#e2e8f0',
+    fontStyle: 'italic',
+    lineHeight: 22,
+    marginBottom: 6,
+  },
+  quoteAuthor: {
+    fontSize: 13,
+    color: '#94a3b8',
+    textAlign: 'right',
   },
 });
