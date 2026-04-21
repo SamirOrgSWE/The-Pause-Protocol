@@ -1,5 +1,5 @@
 import { View, Text, Pressable, StyleSheet, Alert, TextInput } from 'react-native';
-import { router } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import { signOut } from 'firebase/auth';
 import { auth, db } from '../../services/firebase';
 import { useState } from 'react';
@@ -9,7 +9,6 @@ export default function ProfileScreen() {
   const [adminCode, setAdminCode] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Check if user is already admin on mount
   useState(() => {
     const checkRole = async () => {
       const user = auth.currentUser;
@@ -54,125 +53,187 @@ export default function ProfileScreen() {
 
   return (
       <View style={styles.screen}>
-        <View style={styles.container}>
-          <Text style={styles.title}>Profile</Text>
-          <Text style={styles.subtitle}>
-            Manage your account and app settings here.
-          </Text>
+        <Stack.Screen options={{
+          headerShown: true,
+          title: 'Profile',
+          headerStyle: { backgroundColor: '#0D1B2E' },
+          headerTintColor: '#38BDF8',
+          headerTitleStyle: { fontWeight: '700', color: '#FFFFFF' },
+          headerShadowVisible: false,
+        }} />
 
+        <View style={styles.glowTop} />
+
+        <View style={styles.container}>
+          {/* Email card */}
           <View style={styles.card}>
-            <Text style={styles.label}>Email</Text>
+            <Text style={styles.label}>EMAIL</Text>
             <Text style={styles.value}>{auth.currentUser?.email || 'No email found'}</Text>
           </View>
 
+          {/* Role card */}
           <View style={styles.card}>
-            <Text style={styles.label}>Role</Text>
-            <Text style={styles.value}>{isAdmin ? '⭐ Admin' : 'User'}</Text>
+            <Text style={styles.label}>ROLE</Text>
+            <View style={styles.roleRow}>
+              <View style={[styles.roleBadge, isAdmin && styles.roleBadgeAdmin]}>
+                <Text style={[styles.roleBadgeText, isAdmin && styles.roleBadgeTextAdmin]}>
+                  {isAdmin ? '★  Admin' : 'User'}
+                </Text>
+              </View>
+            </View>
           </View>
 
+          {/* Admin code card */}
           {!isAdmin && (
               <View style={styles.card}>
-                <Text style={styles.label}>Enter Admin Code</Text>
+                <Text style={styles.label}>ADMIN CODE</Text>
                 <TextInput
                     style={styles.input}
                     placeholder="Enter code..."
-                    placeholderTextColor="#aaaaaa"
+                    placeholderTextColor={MUTED}
                     value={adminCode}
                     onChangeText={setAdminCode}
                     secureTextEntry
                 />
-                <Pressable style={styles.codeButton} onPress={handleAdminCode}>
+                <Pressable
+                    style={({ pressed }) => [styles.codeButton, pressed && styles.pressed]}
+                    onPress={handleAdminCode}
+                >
                   <Text style={styles.codeButtonText}>Submit</Text>
                 </Pressable>
               </View>
           )}
-
-          <Pressable
-              style={styles.primaryButton}
-              onPress={handleLogout}
-          >
-            <Text style={styles.primaryButtonText}>Log Out</Text>
-          </Pressable>
         </View>
+
+        <Pressable
+            style={({ pressed }) => [styles.logoutButton, pressed && styles.pressed]}
+            onPress={handleLogout}
+        >
+          <Text style={styles.logoutButtonText}>Log Out</Text>
+        </Pressable>
       </View>
   );
 }
 
+const NAVY        = '#0D1B2E';
+const NAVY_CARD   = '#162033';
+const NAVY_BORDER = '#1E3050';
+const CYAN        = '#38BDF8';
+const WHITE       = '#FFFFFF';
+const MUTED       = '#7A93B0';
+const RED         = '#EF4444';
+
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: NAVY,
+  },
+  glowTop: {
+    position: 'absolute',
+    top: -120,
+    alignSelf: 'center',
+    width: 320,
+    height: 320,
+    borderRadius: 160,
+    backgroundColor: CYAN,
+    opacity: 0.07,
   },
   container: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 0,
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: '700',
-    textAlign: 'center',
-    color: '#111111',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    textAlign: 'center',
-    color: '#666666',
-    marginBottom: 28,
+    paddingTop: 28,
   },
   card: {
     borderWidth: 1,
-    borderColor: '#d6d6d6',
-    borderRadius: 16,
-    padding: 18,
-    backgroundColor: '#ffffff',
-    marginBottom: 20,
+    borderColor: NAVY_BORDER,
+    borderRadius: 18,
+    padding: 20,
+    backgroundColor: NAVY_CARD,
+    marginBottom: 14,
   },
   label: {
-    fontSize: 14,
-    color: '#666666',
-    marginBottom: 6,
+    fontSize: 11,
+    color: MUTED,
+    fontWeight: '700',
+    letterSpacing: 1.8,
+    marginBottom: 8,
   },
   value: {
     fontSize: 16,
-    color: '#111111',
+    color: WHITE,
     fontWeight: '500',
+  },
+  roleRow: {
+    flexDirection: 'row',
+  },
+  roleBadge: {
+    borderWidth: 1,
+    borderColor: NAVY_BORDER,
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    alignSelf: 'flex-start',
+  },
+  roleBadgeAdmin: {
+    borderColor: CYAN,
+    backgroundColor: '#0E2A3D',
+  },
+  roleBadgeText: {
+    color: MUTED,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  roleBadgeTextAdmin: {
+    color: CYAN,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#d6d6d6',
-    borderRadius: 10,
-    padding: 12,
+    borderColor: NAVY_BORDER,
+    borderRadius: 12,
+    padding: 14,
     fontSize: 15,
-    color: '#111111',
-    marginBottom: 10,
+    color: WHITE,
+    backgroundColor: NAVY,
+    marginBottom: 12,
     marginTop: 4,
   },
   codeButton: {
-    backgroundColor: '#111111',
-    borderRadius: 10,
-    paddingVertical: 12,
+    backgroundColor: CYAN,
+    borderRadius: 50,
+    paddingVertical: 14,
     alignItems: 'center',
+    shadowColor: CYAN,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 4,
   },
   codeButtonText: {
-    color: '#ffffff',
-    fontWeight: '600',
+    color: NAVY,
+    fontWeight: '700',
     fontSize: 15,
+    letterSpacing: 0.3,
   },
-  primaryButton: {
+  logoutButton: {
     position: 'absolute',
     bottom: 40,
     left: 24,
     right: 24,
-    backgroundColor: '#ff0000a8',
-    borderRadius: 14,
-    paddingVertical: 16,
+    backgroundColor: '#1E1215',
+    borderWidth: 1,
+    borderColor: RED,
+    borderRadius: 50,
+    paddingVertical: 18,
   },
-  primaryButtonText: {
-    color: '#ffffff',
+  logoutButtonText: {
+    color: RED,
     textAlign: 'center',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
+  pressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.975 }],
   },
 });

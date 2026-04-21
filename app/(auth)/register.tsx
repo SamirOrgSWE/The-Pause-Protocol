@@ -77,12 +77,16 @@ export default function RegisterScreen() {
             style={styles.screen}
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
+          <View style={styles.glowTop} />
+
           <View style={styles.container}>
+            {/* Header */}
             <View style={styles.header}>
-              <Text style={styles.title}>Create Account</Text>
+              <Text style={styles.title}>Create{'\n'}Account</Text>
               <Text style={styles.subtitle}>Set up your Pause Protocol account</Text>
             </View>
 
+            {/* Form */}
             <View style={styles.form}>
               <FloatingInput
                   label="Email"
@@ -115,35 +119,133 @@ export default function RegisterScreen() {
                   textContentType="password"
               />
               <Pressable
-                  style={[styles.primaryButton, loading && styles.buttonDisabled]}
+                  style={({ pressed }) => [styles.primaryButton, loading && styles.buttonDisabled, pressed && styles.pressed]}
                   onPress={handleRegister}
                   disabled={loading}
               >
-                <Text style={styles.primaryButtonText}>{loading ? 'Creating account...' : 'Create Account'}</Text>
+                <Text style={styles.primaryButtonText}>
+                  {loading ? 'Creating account...' : 'Create Account'}
+                </Text>
               </Pressable>
               <Pressable
-                  style={styles.secondaryButton}
+                  style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
                   onPress={() => router.back()}
               >
                 <Text style={styles.secondaryButtonText}>Back to Login</Text>
               </Pressable>
             </View>
           </View>
+
+          <Text style={styles.footer}>pause · reflect · proceed</Text>
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
   );
 }
 
+const NAVY        = '#0D1B2E';
+const NAVY_CARD   = '#162033';
+const NAVY_BORDER = '#1E3050';
+const CYAN        = '#38BDF8';
+const WHITE       = '#FFFFFF';
+const MUTED       = '#7A93B0';
+
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#ffffff' },
-  container: { flex: 1, paddingHorizontal: 24, paddingTop: 90 },
-  header: { marginBottom: 40 },
-  title: { fontSize: 30, fontWeight: '700', textAlign: 'center', color: '#111111', marginBottom: 8 },
-  subtitle: { fontSize: 16, textAlign: 'center', color: '#666666' },
-  form: { flexShrink: 1 },
-  primaryButton: { backgroundColor: '#111111', borderRadius: 14, paddingVertical: 16, marginTop: 4 },
-  buttonDisabled: { opacity: 0.7 },
-  primaryButtonText: { color: '#ffffff', textAlign: 'center', fontSize: 16, fontWeight: '600' },
-  secondaryButton: { marginTop: 14, borderWidth: 1, borderColor: '#d6d6d6', borderRadius: 14, paddingVertical: 16 },
-  secondaryButtonText: { textAlign: 'center', color: '#111111', fontSize: 16, fontWeight: '500' },
+  screen: {
+    flex: 1,
+    backgroundColor: NAVY,
+  },
+  glowTop: {
+    position: 'absolute',
+    top: -120,
+    alignSelf: 'center',
+    width: 320,
+    height: 320,
+    borderRadius: 160,
+    backgroundColor: CYAN,
+    opacity: 0.07,
+  },
+  container: {
+    flex: 1,
+    paddingHorizontal: 28,
+    paddingTop: 90,
+  },
+
+  // ── Header ──────────────────────────────
+  header: {
+    alignItems: 'center',
+    marginBottom: 36,
+  },
+  title: {
+    fontSize: 38,
+    fontWeight: '800',
+    color: WHITE,
+    textAlign: 'center',
+    letterSpacing: -0.5,
+    lineHeight: 46,
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 15,
+    color: MUTED,
+    textAlign: 'center',
+  },
+
+  // ── Form ─────────────────────────────────
+  form: {
+    flexShrink: 1,
+    gap: 12,
+  },
+  primaryButton: {
+    backgroundColor: CYAN,
+    borderRadius: 50,
+    paddingVertical: 18,
+    marginTop: 4,
+    shadowColor: CYAN,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 16,
+    elevation: 6,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+  primaryButtonText: {
+    color: NAVY,
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
+  secondaryButton: {
+    borderWidth: 1.5,
+    borderColor: NAVY_BORDER,
+    borderRadius: 50,
+    paddingVertical: 18,
+    backgroundColor: NAVY_CARD,
+  },
+  secondaryButtonText: {
+    textAlign: 'center',
+    color: WHITE,
+    fontSize: 16,
+    fontWeight: '500',
+    letterSpacing: 0.2,
+  },
+  pressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.975 }],
+  },
+
+  // ── Footer ───────────────────────────────
+  footer: {
+    position: 'absolute',
+    bottom: 40,
+    left: 0,
+    right: 0,
+    textAlign: 'center',
+    fontSize: 12,
+    color: NAVY_BORDER,
+    letterSpacing: 3,
+    textTransform: 'uppercase',
+    fontWeight: '600',
+  },
 });

@@ -74,18 +74,34 @@ export default function LoginScreen() {
             style={styles.screen}
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
+          {/* Background glow */}
+          <View style={styles.glowTop} />
+
           <View style={styles.container}>
+            {/* Header */}
             <View style={styles.header}>
-              <Text style={styles.title}>The Pause Protocol</Text>
+              <View style={styles.ringWrap}>
+                <View style={styles.ringOuter}>
+                  <View style={styles.ringInner}>
+                    <View style={styles.pauseIcon}>
+                      <View style={styles.pauseBar} />
+                      <View style={styles.pauseBar} />
+                    </View>
+                  </View>
+                </View>
+              </View>
+              <Text style={styles.title}>The Pause{'\n'}Protocol</Text>
               <Text style={styles.subtitle}>Log in to continue</Text>
             </View>
 
+            {/* Success banner */}
             {showSuccess && (
                 <Animated.View style={[styles.successBanner, { opacity: fadeAnim }]}>
                   <Text style={styles.successText}>✓ Account created successfully! Please log in.</Text>
                 </Animated.View>
             )}
 
+            {/* Form */}
             <View style={styles.form}>
               <FloatingInput
                   label="Email"
@@ -111,47 +127,191 @@ export default function LoginScreen() {
                   textContentType="password"
               />
               <Pressable
-                  style={[styles.primaryButton, loading && styles.buttonDisabled]}
+                  style={({ pressed }) => [styles.primaryButton, loading && styles.buttonDisabled, pressed && styles.pressed]}
                   onPress={handleLogin}
                   disabled={loading}
               >
                 <Text style={styles.primaryButtonText}>{loading ? 'Logging in...' : 'Log In'}</Text>
               </Pressable>
               <Pressable
-                  style={styles.secondaryButton}
+                  style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
                   onPress={() => router.push('/(auth)/register')}
               >
                 <Text style={styles.secondaryButtonText}>Create Account</Text>
               </Pressable>
             </View>
           </View>
+
           <Text style={styles.extranote}>Brought to you by the "C's Get Degrees"</Text>
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
   );
 }
 
+const NAVY        = '#0D1B2E';
+const NAVY_CARD   = '#162033';
+const NAVY_BORDER = '#1E3050';
+const CYAN        = '#38BDF8';
+const CYAN_DIM    = '#0EA5D0';
+const WHITE       = '#FFFFFF';
+const MUTED       = '#7A93B0';
+
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#ffffff' },
-  container: { flex: 1, paddingHorizontal: 24, paddingTop: 90 },
-  header: { marginBottom: 40 },
-  title: { fontSize: 32, fontWeight: '700', textAlign: 'center', color: '#111111', marginBottom: 12 },
-  subtitle: { fontSize: 18, textAlign: 'center', color: '#666666', marginBottom: 0 },
-  successBanner: {
-    backgroundColor: '#e6f9ee',
-    borderColor: '#34c759',
+  screen: {
+    flex: 1,
+    backgroundColor: NAVY,
+  },
+  glowTop: {
+    position: 'absolute',
+    top: -120,
+    alignSelf: 'center',
+    width: 320,
+    height: 320,
+    borderRadius: 160,
+    backgroundColor: CYAN,
+    opacity: 0.07,
+  },
+  container: {
+    flex: 1,
+    paddingHorizontal: 28,
+    paddingTop: 70,
+  },
+
+  // ── Header ──────────────────────────────
+  header: {
+    alignItems: 'center',
+    marginBottom: 36,
+  },
+  ringWrap: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  ringOuter: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    borderWidth: 2,
+    borderColor: CYAN,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: CYAN,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.45,
+    shadowRadius: 16,
+  },
+  ringInner: {
+    width: 66,
+    height: 66,
+    borderRadius: 33,
     borderWidth: 1,
-    borderRadius: 10,
+    borderColor: NAVY_BORDER,
+    backgroundColor: NAVY_CARD,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pauseIcon: {
+    flexDirection: 'row',
+    gap: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pauseBar: {
+    width: 5,
+    height: 20,
+    borderRadius: 3,
+    backgroundColor: CYAN,
+    shadowColor: CYAN,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 5,
+  },
+  title: {
+    fontSize: 34,
+    fontWeight: '800',
+    color: WHITE,
+    textAlign: 'center',
+    letterSpacing: -0.5,
+    lineHeight: 42,
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 15,
+    color: MUTED,
+    textAlign: 'center',
+  },
+
+  // ── Success banner ───────────────────────
+  successBanner: {
+    backgroundColor: '#0D2E1A',
+    borderColor: '#22C55E',
+    borderWidth: 1,
+    borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 16,
     marginBottom: 16,
   },
-  successText: { color: '#1a7f3c', fontSize: 14, fontWeight: '500', textAlign: 'center' },
-  extranote: { position: 'absolute', bottom: 40, left: 0, right: 0, textAlign: 'center', fontSize: 15, color: '#666666' },
-  form: { flexShrink: 1 },
-  primaryButton: { backgroundColor: '#4c00ff', borderRadius: 14, paddingVertical: 16, marginTop: 4 },
-  buttonDisabled: { opacity: 0.7 },
-  primaryButtonText: { color: '#ffffff', textAlign: 'center', fontSize: 16, fontWeight: '600' },
-  secondaryButton: { marginTop: 14, borderWidth: 1, borderColor: '#d6d6d6', borderRadius: 14, paddingVertical: 16 },
-  secondaryButtonText: { textAlign: 'center', color: '#111111', fontSize: 16, fontWeight: '500' },
+  successText: {
+    color: '#4ADE80',
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
+  },
+
+  // ── Form ─────────────────────────────────
+  form: {
+    flexShrink: 1,
+    gap: 12,
+  },
+  primaryButton: {
+    backgroundColor: CYAN,
+    borderRadius: 50,
+    paddingVertical: 18,
+    marginTop: 4,
+    shadowColor: CYAN,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 16,
+    elevation: 6,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+  primaryButtonText: {
+    color: NAVY,
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
+  secondaryButton: {
+    borderWidth: 1.5,
+    borderColor: NAVY_BORDER,
+    borderRadius: 50,
+    paddingVertical: 18,
+    backgroundColor: NAVY_CARD,
+  },
+  secondaryButtonText: {
+    textAlign: 'center',
+    color: WHITE,
+    fontSize: 16,
+    fontWeight: '500',
+    letterSpacing: 0.2,
+  },
+  pressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.975 }],
+  },
+
+  // ── Footer ───────────────────────────────
+  extranote: {
+    position: 'absolute',
+    bottom: 40,
+    left: 0,
+    right: 0,
+    textAlign: 'center',
+    fontSize: 13,
+    color: NAVY_BORDER,
+    letterSpacing: 0.3,
+  },
 });

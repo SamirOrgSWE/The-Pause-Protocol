@@ -14,16 +14,16 @@ export default function PauseScreen() {
 
   const [timeLeft, setTimeLeft] = useState(startSeconds);
   const [quote, setQuote] = useState<{ text: string; author: string } | null>(null);
+
   useEffect(() => {
-    getRandomQuote().then((q) => setQuote(q as unknown as { text: string; author: string }));  }, []);
+    getRandomQuote().then((q) => setQuote(q as unknown as { text: string; author: string }));
+  }, []);
 
   useEffect(() => {
     if (timeLeft <= 0) return;
-
     const interval = setInterval(() => {
       setTimeLeft((prev) => prev - 1);
     }, 1000);
-
     return () => clearInterval(interval);
   }, [timeLeft]);
 
@@ -32,131 +32,220 @@ export default function PauseScreen() {
   const handleContinue = () => {
     if (!canContinue) return;
     if (router.canGoBack()) {
-        router.back();
+      router.back();
     } else {
-        router.replace('/home');
+      router.replace('/home');
     }
   };
 
-  
   return (
-    <>
-      <Stack.Screen/>
+      <>
+        <Stack.Screen options={{ headerShown: false }} />
 
-      <View style={styles.container}>
-        <Text style={styles.title}>Pause Protocol</Text>
+        <View style={styles.container}>
+          <View style={styles.glowTop} />
 
-        <Text style={styles.subtitle}>
-          Before opening {targetApp}, take a breath.
-        </Text>
-
-        <View style={styles.circle}>
-          <Text style={styles.timer}>{timeLeft}</Text>
-        </View>
-
-        {quote && (
-            <View style={styles.quoteContainer}>
-              <Text style={styles.quoteText}>{'\u201C'}{quote.text}{'\u201D'}</Text>
-              <Text style={styles.quoteAuthor}>— {quote.author}</Text>
-            </View>
-        )}
-
-        <Text style={styles.text}>
-          Ask yourself whether you really want to open {targetApp} right now.
-        </Text>
-
-        <Pressable
-          disabled={!canContinue}
-          onPress={handleContinue}
-          style={[styles.button, !canContinue && styles.buttonDisabled]}
-        >
-          <Text style={styles.buttonText}>
-            {canContinue ? 'Continue' : `Wait ${timeLeft}s`}
+          {/* Header */}
+          <Text style={styles.title}>Pause Protocol</Text>
+          <Text style={styles.subtitle}>
+            Before opening {targetApp}, take a breath.
           </Text>
-        </Pressable>
-      </View>
-    </>
+
+          {/* Timer ring */}
+          <View style={styles.ringOuter}>
+            <View style={styles.ringInner}>
+              <Text style={styles.timer}>{timeLeft}</Text>
+            </View>
+          </View>
+
+          {/* Quote card */}
+          {quote && (
+              <View style={styles.quoteContainer}>
+                <Text style={styles.quoteText}>{'\u201C'}{quote.text}{'\u201D'}</Text>
+                <Text style={styles.quoteAuthor}>— {quote.author}</Text>
+              </View>
+          )}
+
+          {/* Prompt */}
+          <Text style={styles.text}>
+            Ask yourself whether you really want to open {targetApp} right now.
+          </Text>
+
+          {/* Button */}
+          <Pressable
+              disabled={!canContinue}
+              onPress={handleContinue}
+              style={({ pressed }) => [
+                styles.button,
+                !canContinue && styles.buttonDisabled,
+                canContinue && pressed && styles.pressed,
+              ]}
+          >
+            <Text style={[styles.buttonText, !canContinue && styles.buttonTextDisabled]}>
+              {canContinue ? 'Continue' : `Wait ${timeLeft}s`}
+            </Text>
+          </Pressable>
+
+          <Text style={styles.footer}>pause · reflect · proceed</Text>
+        </View>
+      </>
   );
 }
+
+const NAVY        = '#0D1B2E';
+const NAVY_CARD   = '#162033';
+const NAVY_BORDER = '#1E3050';
+const CYAN        = '#38BDF8';
+const WHITE       = '#FFFFFF';
+const MUTED       = '#7A93B0';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a',
+    backgroundColor: NAVY,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: 28,
   },
+
+  glowTop: {
+    position: 'absolute',
+    top: -120,
+    alignSelf: 'center',
+    width: 320,
+    height: 320,
+    borderRadius: 160,
+    backgroundColor: CYAN,
+    opacity: 0.07,
+  },
+
+  // ── Header ──────────────────────────────
   title: {
-    fontSize: 34,
-    fontWeight: '700',
-    color: '#fff',
+    fontSize: 38,
+    fontWeight: '800',
+    color: WHITE,
+    textAlign: 'center',
+    letterSpacing: -0.5,
     marginBottom: 10,
   },
   subtitle: {
-    fontSize: 18,
-    color: '#cbd5e1',
+    fontSize: 15,
+    color: MUTED,
     textAlign: 'center',
-    marginBottom: 24,
+    lineHeight: 22,
+    marginBottom: 32,
   },
-  circle: {
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    borderWidth: 6,
-    borderColor: '#38bdf8',
-    justifyContent: 'center',
+
+  // ── Timer ring ───────────────────────────
+  ringOuter: {
+    width: 160,
+    height: 160,
+    borderRadius: 80,
+    borderWidth: 2,
+    borderColor: CYAN,
     alignItems: 'center',
-    marginBottom: 24,
+    justifyContent: 'center',
+    marginBottom: 32,
+    shadowColor: CYAN,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.45,
+    shadowRadius: 20,
+  },
+  ringInner: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 1,
+    borderColor: NAVY_BORDER,
+    backgroundColor: NAVY_CARD,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   timer: {
-    fontSize: 56,
-    fontWeight: '700',
-    color: '#fff',
+    fontSize: 52,
+    fontWeight: '800',
+    color: WHITE,
+    letterSpacing: -1,
   },
-  text: {
-    fontSize: 16,
-    color: '#e2e8f0',
-    textAlign: 'center',
-    lineHeight: 24,
-    marginBottom: 28,
-  },
-  button: {
-    backgroundColor: '#38bdf8',
-    paddingVertical: 15,
-    paddingHorizontal: 24,
-    borderRadius: 14,
-    minWidth: 220,
-    alignItems: 'center',
-  },
-  buttonDisabled: {
-    backgroundColor: '#334155',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 16,
-  },
+
+  // ── Quote card ───────────────────────────
   quoteContainer: {
-    backgroundColor: '#1e293b',
-    borderLeftWidth: 4,
-    borderLeftColor: '#38bdf8',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    marginBottom: 20,
+    backgroundColor: NAVY_CARD,
+    borderLeftWidth: 3,
+    borderLeftColor: CYAN,
+    borderWidth: 1,
+    borderColor: NAVY_BORDER,
+    borderRadius: 16,
+    paddingHorizontal: 18,
+    paddingVertical: 14,
+    marginBottom: 24,
     width: '100%',
   },
   quoteText: {
     fontSize: 15,
-    color: '#e2e8f0',
+    color: WHITE,
     fontStyle: 'italic',
     lineHeight: 22,
-    marginBottom: 6,
+    marginBottom: 8,
   },
   quoteAuthor: {
     fontSize: 13,
-    color: '#94a3b8',
+    color: MUTED,
     textAlign: 'right',
+    fontWeight: '500',
+  },
+
+  // ── Prompt ───────────────────────────────
+  text: {
+    fontSize: 15,
+    color: MUTED,
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 28,
+  },
+
+  // ── Button ───────────────────────────────
+  button: {
+    backgroundColor: CYAN,
+    paddingVertical: 18,
+    borderRadius: 50,
+    width: '100%',
+    alignItems: 'center',
+    shadowColor: CYAN,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 16,
+    elevation: 6,
+    marginBottom: 28,
+  },
+  buttonDisabled: {
+    backgroundColor: NAVY_CARD,
+    borderWidth: 1.5,
+    borderColor: NAVY_BORDER,
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  buttonText: {
+    color: NAVY,
+    fontWeight: '700',
+    fontSize: 16,
+    letterSpacing: 0.3,
+  },
+  buttonTextDisabled: {
+    color: MUTED,
+  },
+  pressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.975 }],
+  },
+
+  // ── Footer ───────────────────────────────
+  footer: {
+    textAlign: 'center',
+    color: NAVY_BORDER,
+    fontSize: 12,
+    letterSpacing: 3,
+    textTransform: 'uppercase',
+    fontWeight: '600',
   },
 });
