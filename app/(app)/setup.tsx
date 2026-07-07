@@ -1,83 +1,50 @@
 import { View, Text, Pressable, StyleSheet, Linking, ScrollView, Alert } from 'react-native';
 import { Stack } from 'expo-router';
-import * as FileSystem from 'expo-file-system/legacy';
-import * as Sharing from 'expo-sharing';
+
+// TODO: replace after rehosting the rebuilt single shortcut (see setup steps below).
+const SHORTCUT_URL = 'https://www.icloud.com/shortcuts/REPLACE_ME';
 
 export default function SetupScreen() {
-  const openShortcut = async () => {
+  const openShortcutLink = async () => {
     try {
-      await Linking.openURL(
-          'https://www.icloud.com/shortcuts/c90c212f52e74af99cebc7b6be414250'
-      );
+      await Linking.openURL(SHORTCUT_URL);
     } catch (error) {
-      console.error('Could not open shortcut link:', error);
+      console.error('Could not open the shortcut link:', error);
       Alert.alert('Error', 'Could not open the shortcut link.');
-    }
-  };
-
-  const downloadJsonFile = async () => {
-    try {
-      const fileUri = FileSystem.documentDirectory + 'cooldowns.json';
-
-      const initialData = {
-      };
-
-      await FileSystem.writeAsStringAsync(
-          fileUri,
-          JSON.stringify(initialData, null, 2)
-      );
-
-      const available = await Sharing.isAvailableAsync();
-
-      if (!available) {
-        Alert.alert(
-            'Sharing unavailable',
-            'Could not open the share sheet on this device.'
-        );
-        return;
-      }
-
-      await Sharing.shareAsync(fileUri, {
-        mimeType: 'application/json',
-        dialogTitle: 'Save cooldowns.json to Files',
-        UTI: 'public.json',
-      });
-    } catch (error) {
-      console.error('Could not create JSON file:', error);
-      Alert.alert('Error', 'Could not create or share the cooldown file.');
     }
   };
 
   const steps = [
     {
-      title: 'Download the cooldown file',
+      title: 'Get the shortcut',
       description:
-          'Tap the cooldown file button below and save cooldowns.json to the Shortcuts folder under iCloud Drive.',
+          'Tap "Get the Shortcut" below and add "The Pause Protocol" to your Shortcuts app.',
     },
     {
-      title: 'Download the shortcut',
+      title: 'Run it once, manually',
       description:
-          'Tap the button below and add the Pause Protocol shortcut to your Shortcuts app. IMPORTANT NOTE: under the third block of the script, you must manually select the cooldowns file you saved previously.',
+          'From the Shortcuts app, run "The Pause Protocol" once and approve every prompt (file access, opening links). This one-time approval is what lets it run silently later. It should land you on the pause screen.',
     },
     {
-      title: 'Set up the automation',
+      title: 'Create one automation per blocked app',
       description:
-          'In Shortcuts, go to Automation, create a Personal Automation, choose App, then pick the distracting apps you want.',
+          'In Shortcuts → Automation → New Personal Automation → App, choose ONE distracting app → "Is Opened" → Run Immediately, with Notify When Run turned OFF. Add a new blank action: a Text action containing that app\'s exact name, then Run Shortcut → "The Pause Protocol" with Input set to that Text. Repeat for each app you want blocked - one automation per app.',
     },
     {
-      title: 'Select the proper settings',
+      title: 'Set your cooldown',
       description:
-          "Select the option that says 'App', choose all apps you consider distractions, and set it to 'Is Opened' and 'Run Immediately' and make sure 'Notify When Run' is off.",
-    },
-    {
-      title: 'Run the Pause Protocol shortcut',
-      description:
-          "Tap 'Next' and then under 'My Shortcuts' select 'The Pause Protocol'.",
+          'Go to Profile and choose how long "Continue" should unlock an app for before the pause appears again.',
     },
     {
       title: 'Congratulations!',
-      description: 'You have successfully setup The Pause Protocol!',
+      description:
+          'Open one of your blocked apps to test - you should land on the pause screen within a second or two. The first time you tap Continue, approve the "open app?" prompt once.',
     },
+  ];
+
+  const notes = [
+    'Popular apps (Instagram, TikTok, YouTube, X, Snapchat, Reddit, Facebook) work out of the box. For any other app, add it to the AppSchemes dictionary inside the shortcut.',
+    'The shortcut keeps a small cooldowns.json file in your iCloud Drive → Shortcuts folder to remember your cooldowns. It contains only app names and times, and never leaves your iCloud.',
   ];
 
   return (
@@ -108,20 +75,20 @@ export default function SetupScreen() {
                 </View>
               </View>
           ))}
+
+          {notes.map((note, index) => (
+              <View key={index} style={styles.noteCard}>
+                <Text style={styles.stepDescription}>{note}</Text>
+              </View>
+          ))}
         </ScrollView>
 
         <View style={styles.footer}>
           <Pressable
-              style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
-              onPress={downloadJsonFile}
-          >
-            <Text style={styles.secondaryButtonText}>Download the Cooldown File</Text>
-          </Pressable>
-          <Pressable
               style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
-              onPress={openShortcut}
+              onPress={openShortcutLink}
           >
-            <Text style={styles.primaryButtonText}>Download the Shortcut</Text>
+            <Text style={styles.primaryButtonText}>Get the Shortcut</Text>
           </Pressable>
         </View>
       </View>
@@ -153,7 +120,16 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 24,
     paddingTop: 20,
-    paddingBottom: 180,
+    paddingBottom: 140,
+  },
+  noteCard: {
+    backgroundColor: NAVY_CARD,
+    borderWidth: 1,
+    borderColor: NAVY_BORDER,
+    borderRadius: 18,
+    padding: 18,
+    marginBottom: 12,
+    opacity: 0.85,
   },
   stepCard: {
     flexDirection: 'row',
@@ -235,20 +211,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     letterSpacing: 0.3,
-  },
-  secondaryButton: {
-    borderWidth: 1.5,
-    borderColor: NAVY_BORDER,
-    borderRadius: 50,
-    paddingVertical: 18,
-    backgroundColor: NAVY_CARD,
-  },
-  secondaryButtonText: {
-    color: WHITE,
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: '500',
-    letterSpacing: 0.2,
   },
   pressed: {
     opacity: 0.7,

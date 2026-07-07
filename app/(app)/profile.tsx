@@ -2,14 +2,19 @@ import { View, Text, Pressable, StyleSheet, Alert, TextInput } from 'react-nativ
 import { Stack, router } from 'expo-router';
 import { signOut } from 'firebase/auth';
 import { auth, db } from '../../services/firebase';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { getCooldownMinutes, setCooldownMinutes, DEFAULT_COOLDOWN_MINUTES } from '../../services/settingsService';
+
+const COOLDOWN_PRESETS = [1, 5, 10, 15, 30, 60];
 
 export default function ProfileScreen() {
   const [adminCode, setAdminCode] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
+  const [cooldown, setCooldown] = useState(DEFAULT_COOLDOWN_MINUTES);
+  const [savingCooldown, setSavingCooldown] = useState(false);
 
-  useState(() => {
+  useEffect(() => {
     const checkRole = async () => {
       const user = auth.currentUser;
       if (!user) return;
@@ -19,7 +24,23 @@ export default function ProfileScreen() {
       } catch {}
     };
     checkRole();
-  });
+
+    getCooldownMinutes().then(setCooldown).catch(() => {});
+  }, []);
+
+  const handleCooldownSelect = async (minutes: number) => {
+    const previous = cooldown;
+    setCooldown(minutes);
+    setSavingCooldown(true);
+    try {
+      await setCooldownMinutes(minutes);
+    } catch (error: any) {
+      setCooldown(previous);
+      Alert.alert('Error', error?.message || 'Could not save your cooldown setting.');
+    } finally {
+      setSavingCooldown(false);
+    }
+  };
 
   const handleAdminCode = async () => {
     const user = auth.currentUser;
@@ -80,6 +101,32 @@ export default function ProfileScreen() {
                   {isAdmin ? '★  Admin' : 'User'}
                 </Text>
               </View>
+            </View>
+          </View>
+
+          {/* Cooldown card */}
+          <View style={styles.card}>
+            <Text style={styles.label}>COOLDOWN</Text>
+            <Text style={styles.helperText}>
+              After you tap Continue, the blocked app opens without a pause for this long.
+            </Text>
+            <View style={styles.chipRow}>
+              {COOLDOWN_PRESETS.map((minutes) => (
+                  <Pressable
+                      key={minutes}
+                      disabled={savingCooldown}
+                      onPress={() => handleCooldownSelect(minutes)}
+                      style={({ pressed }) => [
+                        styles.chip,
+                        cooldown === minutes && styles.chipSelected,
+                        pressed && styles.pressed,
+                      ]}
+                  >
+                    <Text style={[styles.chipText, cooldown === minutes && styles.chipTextSelected]}>
+                      {minutes}m
+                    </Text>
+                  </Pressable>
+              ))}
             </View>
           </View>
 
@@ -184,6 +231,37 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   roleBadgeTextAdmin: {
+    color: CYAN,
+  },
+  helperText: {
+    fontSize: 13,
+    color: MUTED,
+    lineHeight: 18,
+    marginBottom: 14,
+  },
+  chipRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  chip: {
+    borderWidth: 1,
+    borderColor: NAVY_BORDER,
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: NAVY,
+  },
+  chipSelected: {
+    borderColor: CYAN,
+    backgroundColor: '#0E2A3D',
+  },
+  chipText: {
+    color: MUTED,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  chipTextSelected: {
     color: CYAN,
   },
   input: {

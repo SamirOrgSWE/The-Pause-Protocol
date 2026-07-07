@@ -22,14 +22,6 @@ export default function AppLayout() {
       />
 
       <Stack.Screen
-        name="pause"
-        options={{
-          headerShown: false,
-          gestureEnabled: false,
-        }}
-      />
-
-      <Stack.Screen
         name="setup"
         options={{
           headerShown: true,

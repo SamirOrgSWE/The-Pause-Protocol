@@ -62,7 +62,7 @@ export default function HomeScreen() {
 
             <Pressable
                 style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
-                onPress={() => router.push('/(app)/pause')}
+                onPress={() => router.push('/pause')}
             >
               <Text style={styles.primaryButtonText}>Manual Pause</Text>
             </Pressable>

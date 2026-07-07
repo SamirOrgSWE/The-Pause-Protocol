@@ -7,39 +7,14 @@ export default function AppLayout() {
             headerShown: false,
           }}
       >
-        <Stack.Screen name="home" options={{ headerShown: false }} />
-        <Stack.Screen name="pause" options={{ headerShown: false }} />
+        <Stack.Screen name="index" />
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(app)" />
         <Stack.Screen
-            name="profile"
+            name="pause"
             options={{
-              headerShown: true,
-              title: 'Profile',
-              headerStyle: { backgroundColor: '#0D1B2E' },
-              headerTintColor: '#38BDF8',
-              headerTitleStyle: { fontWeight: '700', color: '#FFFFFF' },
-              headerShadowVisible: false,
-            }}
-        />
-        <Stack.Screen
-            name="setup"
-            options={{
-              headerShown: true,
-              title: 'Setup',
-              headerStyle: { backgroundColor: '#0D1B2E' },
-              headerTintColor: '#38BDF8',
-              headerTitleStyle: { fontWeight: '700', color: '#FFFFFF' },
-              headerShadowVisible: false,
-            }}
-        />
-        <Stack.Screen
-            name="adminQuotes"
-            options={{
-              headerShown: true,
-              title: 'Manage Quotes',
-              headerStyle: { backgroundColor: '#0D1B2E' },
-              headerTintColor: '#38BDF8',
-              headerTitleStyle: { fontWeight: '700', color: '#FFFFFF' },
-              headerShadowVisible: false,
+              headerShown: false,
+              gestureEnabled: false,
             }}
         />
       </Stack>
